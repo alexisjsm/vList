@@ -8,12 +8,14 @@
 
 import menus from './components/menus.vue'
 import notas from './components/notas.vue'
+import nuevaNota from './components/nueva_nota.vue'
 
 export default {
   name: 'app',
   components: {
     menus,
-    notas
+    notas,
+    nuevaNota
   }
 }
 </script>

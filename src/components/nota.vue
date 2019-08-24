@@ -9,10 +9,10 @@
                         p {{note.parrafo}}
     .column(v-else)
         section.section
-            .hero(class="hero is-light radios")
+            .hero
                 .hero-body
                     div.container.is-fuild
-                        h1.title.is-bold "No hay notas"
+                        h1.title.is-bold No hay notas
 </template>
 
 <script>
