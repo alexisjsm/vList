@@ -10,21 +10,38 @@
         .navbar-end
           .navbar-item
             .buttons
-              a.button.is-primary.is-outlined Nueva nota
+              a.button.is-primary.is-outlined(@click="NewNotas") Nueva nota
 </template>
 <script>
 export default {
   name: 'menus',
   data () {
     return {
-      isActive: false
+      isActive: false,
+      showNewNota: false
+    }
+  },
+  methods: {
+    NewNotas () {
+      console.log(this.showNewNota)
+
+      this.showNewNota = true
+      this.$bus.$emit('newNotes', this.showNewNota)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.is-outlined{
-  color: purple;
+
+#menus{
+  .is-outlined{
+    color: purple;
+    border-color: purple;
+  }
+  .is-outlined:hover{
+      color: #fff;
+      background: purple;
+  }
 }
 </style>

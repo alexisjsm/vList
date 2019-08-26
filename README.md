@@ -1,5 +1,7 @@
 # vlist
 
+Proyecto de desarrollo para aprender a usar vuejs
+ 
 ## Project setup
 ```
 npm install
