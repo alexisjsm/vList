@@ -37,20 +37,6 @@ export default {
       this.mostrar = showNewNota
       console.log(`this.mostrar ahora es ${this.mostrar}`)
     })
-  },
-
-  methods: {
-
-    // show (newValue) {
-    //   console.log(newValue)
-    //   this.mostrar = newValue
-    // },
-    // destroyed () {
-    //   this.$bus.$on('closedMe', (showNewNota) => {
-    //     console.log(`this.showNewNota es ${this.mostar}`)
-    //     this.mostrar = showNewNota
-    //   })
-    // }
   }
 }
 </script>

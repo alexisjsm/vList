@@ -3,20 +3,21 @@
     .modal-background
     .modal-card
         header.modal-card-head
-            p.modal-card-title
+            p.modal-card-title Nueva nota
             button.delete(@click="closed")
         section.modal-card-body
             .field
                 .control
-                    input(type="text" class="input" placeholder="Titulo")
+                    input(type="text" class="input" placeholder="Titulo" name="title" v-model='Nota.title')
                 .control
-                    textarea(class="textarea" placeholder="Nota")
+                    textarea(class="textarea" placeholder="Nota" name="content" v-model='Nota.content')
+                    span {{logs}}
             footer.modal-card-footer
                 .field.is-grouped
                     .control
-                        button.button.is-link Guardar
+                        button.button.is-link(@click="save") Guardar
                     .control
-                        button.button.is-danger Borrar
+                        button.button.is-danger(@click='clean') Borrar
 
 </template>
 
@@ -25,12 +26,21 @@ export default {
   name: 'nueva-nota',
   data () {
     return {
-      showNewNota: this.isActive
+      showNewNota: this.isActive,
+      Nota: {
+        title: '',
+        content: ''
+      }
     }
   },
   props: {
     isActive: {
       type: Boolean
+    }
+  },
+  computed: {
+    logs () {
+      return console.log(`El titulo es ${this.Nota.title} \n El contenido es: ${this.Nota.content} `)
     }
   },
   methods: {
@@ -40,6 +50,18 @@ export default {
       this.showNewNota = false
       this.$bus.$emit('closedMe', this.showNewNota)
       console.log(`this.showNewNota ahora es ${this.showNewNota}`)
+    },
+    save () {
+      console.log(`Lanzado el enveto Save`)
+      this.showNewNota = false
+      this.$bus.$emit('save', this.Nota)
+      this.$bus.$emit('closedMe', this.showNewNota)
+    },
+    clean () {
+      this.Nota.title = ''
+      this.Nota.content = ''
+      console.log(`Lanzado el evento Clean`)
+      this.$emit('clean')
     }
   }
 }

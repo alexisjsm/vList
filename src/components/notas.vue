@@ -1,8 +1,8 @@
 <template lang="pug">
 .columns.is-centered
   #notas.column
-    .columns.multiline(v-if="notes.length>=1")
-        .column.is-one-third(v-for="note in notes" :key="Math.random()")
+    .columns.is-multiline(v-if="notes.length>=1")
+        .column.is-one-quarter(v-for="note in notes" :key="Math.random()")
             .hero.is-light
                 .hero-body
                     div.container
@@ -22,22 +22,14 @@ export default {
   data () {
     return {
       notes: [
-        {
-          title: 'Titulo 1',
-          content: 'Labore occaecat in officia commodo ea esse anim reprehenderit anim officia voluptate. Veniam aliquip esse dolor do do ea. Dolore aute aliqua ex consectetur eu nisi sit. Adipisicing duis sint duis esse cillum sit ipsum. Nulla fugiat incididunt non velit laboris ex nisi minim consectetur excepteur veniam cupidatat irure reprehenderit. Eiusmod aliqua elit mollit eu qui qui dolore tempor elit laboris voluptate. Esse nisi occaecat aliquip consequat anim ex eiusmod ullamco duis.'
-        },
-        {
-          title: 'Titulo 2',
-          content: 'Labore occaecat in officia commodo ea esse anim reprehenderit anim officia voluptate. Veniam aliquip esse dolor do do ea. Dolore aute aliqua ex consectetur eu nisi sit. Adipisicing duis sint duis esse cillum sit ipsum. Nulla fugiat incididunt non velit laboris ex nisi minim consectetur excepteur veniam cupidatat irure reprehenderit. Eiusmod aliqua elit mollit eu qui qui dolore tempor elit laboris voluptate. Esse nisi occaecat aliquip consequat anim ex eiusmod ullamco duis.'
-        },
-        {
-          title: 'Titulo 3',
-          content: 'Labore occaecat in officia commodo ea esse anim reprehenderit anim officia voluptate. Veniam aliquip esse dolor do do ea. Dolore aute aliqua ex consectetur eu nisi sit. Adipisicing duis sint duis esse cillum sit ipsum. Nulla fugiat incididunt non velit laboris ex nisi minim consectetur excepteur veniam cupidatat irure reprehenderit. Eiusmod aliqua elit mollit eu qui qui dolore tempor elit laboris voluptate. Esse nisi occaecat aliquip consequat anim ex eiusmod ullamco duis.'
-        }
       ]
     }
+  },
+  created () {
+    this.$bus.$on('save', (note) => {
+      this.notes.push(note)
+    })
   }
-
 }
 </script>
 
