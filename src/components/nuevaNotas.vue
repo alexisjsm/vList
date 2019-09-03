@@ -28,6 +28,7 @@ export default {
     return {
       showNewNota: this.isActive,
       Nota: {
+        id: '',
         title: '',
         content: ''
       }
@@ -53,9 +54,14 @@ export default {
     },
     save () {
       console.log(`Lanzado el enveto Save`)
+      this.timestamp()
       this.showNewNota = false
       this.$bus.$emit('save', this.Nota)
       this.$bus.$emit('closedMe', this.showNewNota)
+    },
+    timestamp () {
+      let time = new Date()
+      this.Nota.id = time.getTime()
     },
     clean () {
       this.Nota.title = ''
