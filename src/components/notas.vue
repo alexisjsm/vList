@@ -32,7 +32,9 @@ export default {
   },
   created () {
     this.$bus.$on('save', (note) => {
-      this.notes.push(note)
+      if (note.title.length || note.content.length > 0) {
+        this.notes.push(note)
+      }
     })
   },
   mounted () {
@@ -57,6 +59,7 @@ export default {
   border-radius: 5px 5px;
 }
 .is-active{
-  border: 1px black solid
+  border: 1px black solid;
+  box-shadow: 2px 2px 5px rgba(133, 133, 133)
   }
 </style>

@@ -11,14 +11,19 @@
                     input(type="text" class="input" placeholder="Titulo" name="title" v-model='Nota.title')
                 .control
                     textarea(class="textarea" placeholder="Nota" name="content" v-model='Nota.content')
-                    span {{logs}}
             footer.modal-card-footer
                 .field.is-grouped
                     .control
-                        button.button.is-link(@click="save") Guardar
+                      span {{Check}}
+                        button.button.is-link(@click="save" v-show="showSave")
+                          span.icon
+                            font-awesome-icon(icon="save")
+                          span Guardar
                     .control
-                        button.button.is-danger(@click='clean') Borrar
-
+                        button.button.is-danger(@click='clean')
+                          span.icon
+                            font-awesome-icon(icon="backspace")
+                          span Borrar
 </template>
 
 <script>
@@ -27,6 +32,7 @@ export default {
   data () {
     return {
       showNewNota: this.isActive,
+      showSave: false,
       Nota: {
         id: '',
         title: '',
@@ -42,6 +48,9 @@ export default {
   computed: {
     logs () {
       return console.log(`El titulo es ${this.Nota.title} \n El contenido es: ${this.Nota.content} `)
+    },
+    Check () {
+      return this.CheckNewNote()
     }
   },
   methods: {
@@ -51,6 +60,13 @@ export default {
       this.showNewNota = false
       this.$bus.$emit('closedMe', this.showNewNota)
       console.log(`this.showNewNota ahora es ${this.showNewNota}`)
+    },
+    CheckNewNote () {
+      if (this.Nota.title || this.Nota.content > 0) {
+        this.showSave = true
+      } else {
+        this.showSave = false
+      }
     },
     save () {
       console.log(`Lanzado el enveto Save`)

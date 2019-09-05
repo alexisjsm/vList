@@ -8,7 +8,9 @@
         p {{note.content}}
       footer.hero-foot(v-show=" note.id === isSelected ")
         .buttons
-          button.button.is-danger(@click='removed') Borrar
+          button.button.is-danger(@click='removed')
+            span
+              font-awesome-icon(icon="trash-alt")
 
 </template>
 
@@ -41,13 +43,25 @@ export default {
 
 <style lang="scss" scoped>
     #nota{
-        .title{
-          text-align: center;
+      .hero-head{
+        .container{
+          .title{
+            text-align: center;
+            padding: .3em;
         }
+      }
+    }
         .hero-body{
-          padding: 1em;
+          padding: .3em;
           .container{
             margin-bottom: 1.5em;
+            .title{
+               text-align: center;
+               padding: .3em;
+            }
+            p {
+              white-space: pre-line;
+            }
           }
         }
     }
