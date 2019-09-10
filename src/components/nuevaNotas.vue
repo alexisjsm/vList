@@ -1,29 +1,39 @@
 <template lang="pug">
-#nueva-nota.modal(:class="{'is-active':showNewNota}")
-    .modal-background
-    .modal-card
-        header.modal-card-head
-            p.modal-card-title Nueva nota
-            button.delete(@click="closed")
-        section.modal-card-body
-            .field
-                .control
-                    input(type="text" class="input" placeholder="Titulo" name="title" v-model='Nota.title')
-                .control
-                    textarea(class="textarea" placeholder="Nota" name="content" v-model='Nota.content')
-            footer.modal-card-footer
-                .field.is-grouped
-                    .control
-                      span {{Check}}
-                        button.button.is-link(@click="save" v-show="showSave")
-                          span.icon
-                            font-awesome-icon(icon="save")
-                          span Guardar
-                    .control
-                        button.button.is-danger(@click='clean')
-                          span.icon
-                            font-awesome-icon(icon="backspace")
-                          span Borrar
+transition(name="fade")
+  #nueva-nota.modal(:class="{'is-active':showNewNota}")
+      .modal-background
+      .modal-card
+          header.modal-card-head
+              p.modal-card-title Nueva nota
+              button.delete(@click="closed")
+          section.modal-card-body
+              .field
+                  .control
+                      input(type="text" class="input" placeholder="Titulo" name="title" v-model='Nota.title')
+                  .control
+                    .buttons
+                      span.button.icon(@click="list")
+                        font-awesome-icon(icon='list-ul')
+                  .control(v-if="showList")
+                    div(v-if="Nota.contentList.length>=1")
+                      input.input(placeholder="Lista" name="list" v-for="n in Nota.contentList" :value="n")
+                    div
+                      input.input(placeholder="Lista" name="list" v-model="dataList" @keyup.enter="addList")
+                  .control(v-else)
+                      textarea(class="textarea" placeholder="Nota" name="content" v-model='Nota.content')
+              footer.modal-card-footer
+                  .field.is-grouped
+                      .control
+                        span {{Check}}
+                          button.button.is-link(@click="save" v-show="showSave")
+                            span.icon
+                              font-awesome-icon(icon="save")
+                            span Guardar
+                      .control
+                          button.button.is-danger(@click='clean')
+                            span.icon
+                              font-awesome-icon(icon="backspace")
+                            span Borrar
 </template>
 
 <script>
@@ -33,11 +43,14 @@ export default {
     return {
       showNewNota: this.isActive,
       showSave: false,
+      showList: false,
       Nota: {
         id: '',
         title: '',
-        content: ''
-      }
+        content: '',
+        contentList: []
+      },
+      dataList: ''
     }
   },
   props: {
@@ -82,8 +95,20 @@ export default {
     clean () {
       this.Nota.title = ''
       this.Nota.content = ''
+      this.Nota.contentList = []
       console.log(`Lanzado el evento Clean`)
       this.$emit('clean')
+    },
+    list () {
+      this.showList = !this.showList
+      this.Nota.content = ''
+      this.Nota.contentList = []
+      this.$emit('list')
+    },
+    addList () {
+      this.Nota.contentList.push(this.dataList)
+      this.dataList = ''
+      this.$emit('addList')
     }
   }
 }

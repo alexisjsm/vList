@@ -1,16 +1,20 @@
 <template lang="pug">
 #nota(@click='selected')
     header.hero-head
-      .container
+      .content
         h1.title.is-bold {{note.title}}
     .hero-body
-      .container
+      .content(v-if="note.contentList.length >= 1")
+        ul
+          li(v-for='n in note.contentList' :key="n") {{n}}
+      .content
         p {{note.content}}
-      footer.hero-foot(v-show=" note.id === isSelected ")
-        .buttons
-          button.button.is-danger(@click='removed')
-            span
-              font-awesome-icon(icon="trash-alt")
+      transition(name="fade")
+        footer.hero-foot(v-show=" note.id === isSelected ")
+          .buttons
+            button.button.is-danger(@click='removed')
+              span
+                font-awesome-icon(icon="trash-alt")
 
 </template>
 
@@ -44,7 +48,7 @@ export default {
 <style lang="scss" scoped>
     #nota{
       .hero-head{
-        .container{
+        .content {
           .title{
             text-align: center;
             padding: .3em;
@@ -53,7 +57,7 @@ export default {
     }
         .hero-body{
           padding: .3em;
-          .container{
+          .content {
             margin-bottom: 1.5em;
             .title{
                text-align: center;

@@ -2,7 +2,8 @@
 #app.section
   .container
     menus
-    nueva-nota(v-if="mostrar"  :isActive="mostrar")
+    transition(name="fade")
+      nueva-nota(v-if="mostrar"  :isActive="mostrar")
     notas
 </template>
 <script>

@@ -1,8 +1,9 @@
 <template lang="pug">
 #notas.column
   .columns.is-multiline(v-if="notes.length>=1")
-    .column.is-one-quarter( v-for="note in notes" )
-      .hero.is-light(is="nota" :key="note.id" :note="note" @selected="setSelected" :class="{'is-active': note.id === noteId}" :isSelected="noteId")
+   .column.is-one-quarter( v-for="note in notes")
+      transition-group(name="fade")
+        .hero.is-light(is="nota" :key="note.id" :note="note" @selected="setSelected" :class="{'is-active': note.id === noteId}" :isSelected="noteId")
   .columns.is-centered(v-else)
     .column.is-half
       .hero
@@ -23,8 +24,14 @@ export default {
       notes: [
         {
           id: 1,
-          title: 'Titulo',
-          content: 'Laborum reprehenderit adipisicing qui cupidatat. Cillum sunt pariatur velit cupidatat. Tempor dolor enim id anim pariatur sunt ipsum laboris culpa ad.'
+          title: 'Todo',
+          content: '',
+          contentList: [
+            'Realizar un backend',
+            'Agregar multimedia ( video, imagen)',
+            'editar nota',
+            'editor de texto'
+          ]
         }
       ],
       noteId: 0
