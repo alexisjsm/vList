@@ -4,9 +4,9 @@
       .content
         h1.title.is-bold {{note.title}}
     .hero-body
-      .content(v-if="note.contentList.length >= 1")
+      .content(v-show="note.contentList.length >= 1")
         ul
-          li(v-for='n in note.contentList' :key="n") {{n}}
+          li(v-for='(n,index) in note.contentList' :key="index") {{n}}
       .content
         p {{note.content}}
       transition(name="fade")
@@ -51,7 +51,7 @@ export default {
         .content {
           .title{
             text-align: center;
-            padding: .3em;
+            padding: .2em;
         }
       }
     }

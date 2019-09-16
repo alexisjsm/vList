@@ -2,8 +2,7 @@
 #notas.column
   .columns.is-multiline(v-if="notes.length>=1")
    .column.is-one-quarter( v-for="note in notes")
-      transition-group(name="fade")
-        .hero.is-light(is="nota" :key="note.id" :note="note" @selected="setSelected" :class="{'is-active': note.id === noteId}" :isSelected="noteId")
+       .hero.is-light(is="nota" :key="note.id" :note="note" @selected="setSelected" :class="{'is-active': note.id === noteId}" :isSelected="noteId")
   .columns.is-centered(v-else)
     .column.is-half
       .hero
@@ -27,7 +26,7 @@ export default {
           title: 'Todo',
           content: '',
           contentList: [
-            'Realizar un backend',
+            'Realizar  Backend',
             'Agregar multimedia ( video, imagen)',
             'editar nota',
             'editor de texto'
@@ -54,7 +53,7 @@ export default {
   },
   methods: {
 
-    setSelected (id, isActive) {
+    setSelected (id) {
       this.noteId = id
     }
   }
@@ -66,7 +65,6 @@ export default {
   border-radius: 5px 5px;
 }
 .is-active{
-  border: 1px black solid;
-  box-shadow: 2px 2px 5px rgba(133, 133, 133)
+  border: 1px rgb(163, 163, 163) solid;
   }
 </style>

@@ -15,10 +15,15 @@ transition(name="fade")
                       span.button.icon(@click="list")
                         font-awesome-icon(icon='list-ul')
                   .control(v-if="showList")
-                    div(v-if="Nota.contentList.length>=1")
-                      input.input(placeholder="Lista" name="list" v-for="n in Nota.contentList" :value="n")
-                    div
-                      input.input(placeholder="Lista" name="list" v-model="dataList" @keyup.enter="addList")
+                    div.columns.is-multiline(v-if="Nota.contentList.length>=1")
+                      div.column.is-12(name="list" v-for="(n,index) in Nota.contentList")
+                        p.divInput {{n}}
+                        span.buttons.are-small
+                          button.button(@click="remove(index)")
+                            span.icon
+                              font-awesome-icon(icon="trash-alt")
+                    div.content
+                      input.input(placeholder="Pulsa Enter para añadir a la lista" name="list" v-model="dataList" @keyup.enter="addList")
                   .control(v-else)
                       textarea(class="textarea" placeholder="Nota" name="content" v-model='Nota.content')
               footer.modal-card-footer
@@ -44,13 +49,15 @@ export default {
       showNewNota: this.isActive,
       showSave: false,
       showList: false,
+      ActiveIs: false,
       Nota: {
         id: '',
         title: '',
         content: '',
         contentList: []
       },
-      dataList: ''
+      dataList: '',
+      dataSelelect: ''
     }
   },
   props: {
@@ -96,19 +103,18 @@ export default {
       this.Nota.title = ''
       this.Nota.content = ''
       this.Nota.contentList = []
-      console.log(`Lanzado el evento Clean`)
-      this.$emit('clean')
     },
     list () {
       this.showList = !this.showList
       this.Nota.content = ''
       this.Nota.contentList = []
-      this.$emit('list')
     },
     addList () {
       this.Nota.contentList.push(this.dataList)
       this.dataList = ''
-      this.$emit('addList')
+    },
+    remove (index) {
+      this.Nota.contentList.splice(index, 1)
     }
   }
 }
@@ -123,5 +129,19 @@ export default {
 }
 .hero-body {
   padding: 0.7em;
+}
+.column{
+  display: inline-flex;
+  flex-direction: row;
+  p {
+    width: 100%;
+  }
+}
+
+.divInput {
+  border-radius: 4px;
+  border: 1px #b5b5b5 solid;
+  padding: .2em;
+  margin-right: .3em;
 }
 </style>
