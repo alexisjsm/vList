@@ -13,46 +13,35 @@
 
 <script>
 import nota from './nota.vue'
+// import { db } from './plugins/fb'
+
 export default {
   name: 'notas',
   components: {
     nota
   },
+
+  beforeCreate () {
+    this.$store.dispatch('fetchNotes')
+  },
   data () {
     return {
-      notes: [
-        {
-          id: 1,
-          title: 'Todo',
-          content: '',
-          contentList: [
-            'Realizar  Backend',
-            'Agregar multimedia ( video, imagen)',
-            'editar nota',
-            'editor de texto'
-          ]
-        }
-      ],
       noteId: 0
     }
   },
-  created () {
-    this.$bus.$on('save', (note) => {
-      if (note.title.length || note.content.length > 0) {
-        this.notes.push(note)
-      }
-    })
+  computed: {
+    notes: {
+      get () {
+        return this.$store.state.notes
+      },
+      set () {}
+    }
   },
-  mounted () {
-    this.$bus.$on('removed', (id) => {
-      this.notes = this.notes.filter(n => {
-        return n.id !== id
-      })
-      console.log(this.notes)
-    })
-  },
-  methods: {
+  // firebase: {
+  //   notes: db.ref('notes')
+  // },
 
+  methods: {
     setSelected (id) {
       this.noteId = id
     }

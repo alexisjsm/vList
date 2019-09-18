@@ -4,10 +4,10 @@
       .content
         h1.title.is-bold {{note.title}}
     .hero-body
-      .content(v-show="note.contentList.length >= 1")
+      .content(v-if="note.hasOwnProperty('contentList') && note.contentList.length >= 1")
         ul
           li(v-for='(n,index) in note.contentList' :key="index") {{n}}
-      .content
+      .content(v-else)
         p {{note.content}}
       transition(name="fade")
         footer.hero-foot(v-show=" note.id === isSelected ")
@@ -39,7 +39,7 @@ export default {
       this.$emit('selected', this.note.id)
     },
     removed () {
-      this.$bus.$emit('removed', this.note.id)
+      this.$store.commit('removed', this.note.id)
     }
   }
 }
