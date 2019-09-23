@@ -35,14 +35,35 @@ const store = new Vuex.Store({
 
       instance.once('value', (snapshot) => {
         const notes = snapshot.val()
-
         Object.keys(notes).forEach((noteId) => {
           const note = notes[noteId]
-          console.log(note)
           commit('setNotes', note)
         })
       })
 
+      resolve(Object.values(state.notes))
+    }),
+    saveNote: ({ commit }, note) => {
+      const newNote = note
+      const noteId = db.ref('notes').push().key
+      const updates = {}
+
+      updates[`notes/${noteId}`] = newNote
+      db.ref().update(updates).then(() => {
+        commit('setNotes', updates[`notes/${noteId}`])
+      })
+    },
+    deleteNote: ({ state, commit }, id) => new Promise((resolve) => {
+      const instance = db.ref('notes')
+      instance.once('value', (snapshot) => {
+        const oldNotes = snapshot.val()
+        Object.keys(oldNotes).forEach((noteKey) => {
+          if (oldNotes[noteKey].id === id) {
+            db.ref('notes').child(noteKey).remove()
+          }
+        })
+      })
+      commit('removed', id)
       resolve(Object.values(state.notes))
     })
   }

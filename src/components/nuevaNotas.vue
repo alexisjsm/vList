@@ -92,7 +92,7 @@ export default {
       console.log(`Lanzado el enveto Save`)
       this.timestamp()
       this.showNewNota = false
-      this.$store.commit('save', this.Nota)
+      this.$store.dispatch('saveNote', this.Nota)
 
       this.$bus.$emit('closedMe', this.showNewNota)
     },

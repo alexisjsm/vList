@@ -39,7 +39,7 @@ export default {
       this.$emit('selected', this.note.id)
     },
     removed () {
-      this.$store.commit('removed', this.note.id)
+      this.$store.dispatch('deleteNote', this.note.id)
     }
   }
 }

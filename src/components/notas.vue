@@ -13,7 +13,6 @@
 
 <script>
 import nota from './nota.vue'
-// import { db } from './plugins/fb'
 
 export default {
   name: 'notas',
@@ -24,6 +23,7 @@ export default {
   beforeCreate () {
     this.$store.dispatch('fetchNotes')
   },
+
   data () {
     return {
       noteId: 0
@@ -37,9 +37,6 @@ export default {
       set () {}
     }
   },
-  // firebase: {
-  //   notes: db.ref('notes')
-  // },
 
   methods: {
     setSelected (id) {
