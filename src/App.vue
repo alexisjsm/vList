@@ -2,13 +2,13 @@
 #app.section
   .container
     menus
-    transition(name="fade")
+    transition(name="fade" mode="in-out")
       nueva-nota(v-if="mostrar"  :isActive="mostrar")
     notas
 </template>
 <script>
 
-import menus from './components/menus.vue'
+import menus from './layout/menus.vue'
 import notas from './components/notas.vue'
 import NuevaNota from './components/nuevaNotas.vue'
 

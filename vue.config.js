@@ -1,7 +1,7 @@
 module.exports = {
   css: {
     loaderOptions: {
-      sass: {
+      scss: {
         data: `
           @import  "@/styles/_main.scss";
         `

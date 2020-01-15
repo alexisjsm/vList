@@ -53,6 +53,7 @@ const store = new Vuex.Store({
         commit('setNotes', updates[`notes/${noteId}`])
       })
     },
+
     deleteNote: ({ state, commit }, id) => new Promise((resolve) => {
       const instance = db.ref('notes')
       instance.once('value', (snapshot) => {
