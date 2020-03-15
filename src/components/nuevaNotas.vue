@@ -1,44 +1,37 @@
 <template lang="pug">
 transition(name="fade")
-  #nueva-nota.modal(:class="{'is-active':showNewNota}")
-      .modal-background
+  b-modal(has-modal-card :active.sync="showNewNota")
       .modal-card
           header.modal-card-head
-              p.modal-card-title Nueva nota
+              h1.modal-card-title Nueva nota
               button.delete(@click="closed")
           section.modal-card-body
-              .field
+            b-field
+              .control
+                b-input(type="text" placeholder="Titulo" name="title" v-model='Nota.title')
+                .control
+                  .buttons
+                    b-button(@click="list" icon-right="list-ul")
+            b-field
+              .control(v-if="showList")
+                div.columns.is-multiline(v-if="Nota.contentList.length>=1")
+                  div.column.is-12(name="list" v-for="(n,index) in Nota.contentList")
+                    p.divInput {{n}}
+                    span.buttons.are-small
+                      button.button(@click="remove(index)")
+                        span.icon
+                          font-awesome-icon(icon="trash-alt")
+                div.content
+                  b-input(placeholder="Pulsa Enter para añadir a la lista" name="list" v-model="dataList" @keyup.native.enter="addList")
+              .control(v-else)
+                  b-input(type="textarea" placeholder="Nota" name="content" v-model='Nota.content')
+            footer.modal-card-footer
+                b-field
                   .control
-                      input(type="text" class="input" placeholder="Titulo" name="title" v-model='Nota.title')
+                    span {{Check}}
+                      b-button(type="is-info" @click="save" v-show="showSave" icon-left="save") Guardar
                   .control
-                    .buttons
-                      span.button.icon(@click="list")
-                        font-awesome-icon(icon='list-ul')
-                  .control(v-if="showList")
-                    div.columns.is-multiline(v-if="Nota.contentList.length>=1")
-                      div.column.is-12(name="list" v-for="(n,index) in Nota.contentList")
-                        p.divInput {{n}}
-                        span.buttons.are-small
-                          button.button(@click="remove(index)")
-                            span.icon
-                              font-awesome-icon(icon="trash-alt")
-                    div.content
-                      input.input(placeholder="Pulsa Enter para añadir a la lista" name="list" v-model="dataList" @keyup.enter="addList")
-                  .control(v-else)
-                      textarea(class="textarea" placeholder="Nota" name="content" v-model='Nota.content')
-              footer.modal-card-footer
-                  .field.is-grouped
-                      .control
-                        span {{Check}}
-                          button.button.is-link(@click="save" v-show="showSave")
-                            span.icon
-                              font-awesome-icon(icon="save")
-                            span Guardar
-                      .control
-                          button.button.is-danger(@click='clean')
-                            span.icon
-                              font-awesome-icon(icon="backspace")
-                            span Borrar
+                      b-button(type="is-danger" @click='clean' icon-left="backspace") Borrar
 </template>
 
 <script>
