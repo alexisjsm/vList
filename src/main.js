@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import eventBus from './components/plugins/event_bus'
 
-import store from './store'
+import store from './store/store.js'
 
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'

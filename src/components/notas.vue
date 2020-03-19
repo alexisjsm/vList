@@ -1,14 +1,20 @@
 <template lang="pug">
-#notas.column
+#notas
   .columns.is-multiline(v-if="notes.length>=1")
-   .column.is-one-quarter( v-for="note in notes")
-       .hero.is-light(is="nota" :key="note.id" :note="note" @selected="setSelected" :class="{'is-active': note.id === noteId}" :isSelected="noteId")
+   .column.is-one-quarter(v-for="note in notes")
+      .tile.is-ancestor(
+        is="nota"
+        :key="note.id"
+        :note="note"
+        @selected="setSelected"
+        :class="{'is-active': note.id === noteId}"
+        :isSelected="noteId")
   .columns.is-centered(v-else)
-    .column.is-half
+    .column
       .hero
         .hero-body
-          div.container.is-fuild
-            h1.title.is-bold No hay notas
+          div.container.is-fluid
+            h1.title.is-bold.has-text-centered No hay notas
 </template>
 
 <script>
@@ -30,11 +36,8 @@ export default {
     }
   },
   computed: {
-    notes: {
-      get () {
-        return this.$store.state.notes
-      },
-      set () {}
+    notes () {
+      return this.$store.state.notes
     }
   },
 
@@ -45,12 +48,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.hero{
-  border-radius: 5px 5px;
-}
-.is-active{
-  border: 1px rgb(163, 163, 163) solid;
-  }
-</style>

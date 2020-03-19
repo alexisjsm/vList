@@ -13,3 +13,11 @@ const config = {
 const app = Firebase.initializeApp(config)
 
 export const db = app.database()
+export var isDBconnecting = db.ref('.info/connected')
+  .on('value', (snap) => {
+    let isOk = false
+    if (snap.val()) {
+      isOk = true
+    }
+    return isOk
+  })

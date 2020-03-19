@@ -1,21 +1,21 @@
 <template lang="pug">
-#nota(@click='selected')
-    header.hero-head
-      .content
+#nota.tile.is-parent(@click='selected')
+  .tile.is-child.has-background-light.box
+    header
         h1.title.is-bold {{note.title}}
-    .hero-body
-      .content(v-if="note.hasOwnProperty('contentList') && note.contentList.length >= 1")
+    section
+      .content(v-if="note.hasOwnProperty('list') && note.list.length >= 1")
         ul
-          li(v-for='(n,index) in note.contentList' :key="index") {{n}}
+          li(v-for='(n,index) in note.list' :key="index")
+            b-checkbox(:native-value="n") {{n}}
+            span
+              b-button(icon-right="trash-alt" size="is-small")
       .content(v-else)
         p {{note.content}}
-      transition(name="fade")
-        footer.hero-foot(v-show=" note.id === isSelected ")
-          .buttons
-            button.button.is-danger(@click='removed')
-              span
-                font-awesome-icon(icon="trash-alt")
-
+    transition(name="fade")
+      footer(v-show=" note.id === isSelected ")
+        .buttons
+          b-button(type="is-danger" @click='removed' icon-right="trash-alt")
 </template>
 
 <script>
@@ -34,39 +34,55 @@ export default {
       type: Number
     }
   },
+  data () {
+    return {
+      isDeleteActive: false
+    }
+  },
   methods: {
     selected () {
       this.$emit('selected', this.note.id)
     },
     removed () {
-      this.$store.dispatch('deleteNote', this.note.id)
+      const remove = this.$store.dispatch('deleteNote', this.note.id)
+      remove
+        .then(() => {
+          this.$buefy.toast.open({
+            message: 'Nota borrada',
+            type: 'is-success'
+          })
+        })
+        .catch(() => {
+          this.$buefy.toast.open({
+            message: 'Nota no borrada',
+            type: 'is-danger'
+          })
+        })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-    #nota{
-      .hero-head{
-        .content {
-          .title{
-            text-align: center;
-            padding: .2em;
-        }
-      }
-    }
-        .hero-body{
-          padding: .3em;
-          .content {
-            margin-bottom: 1.5em;
-            .title{
-               text-align: center;
-               padding: .3em;
-            }
-            p {
-              white-space: pre-line;
-            }
-          }
-        }
-    }
+
+header,section,footer{
+  margin-bottom: 1rem;
+}
+
+.content ul, li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+li:hover>span{
+  display: block;
+}
+
+li span{
+  display: none;
+  float: right;
+
+}
+
 </style>

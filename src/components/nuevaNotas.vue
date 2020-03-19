@@ -4,37 +4,35 @@ transition(name="fade")
       .modal-card
           header.modal-card-head
               h1.modal-card-title Nueva nota
-              button.delete(@click="closed")
+              button.delete(@click="buttonClosed")
           section.modal-card-body
             b-field
               .control
-                b-input(type="text" placeholder="Titulo" name="title" v-model='Nota.title')
+                b-input(type="text" placeholder="Titulo" name="title" v-model='title')
                 .control
                   .buttons
-                    b-button(@click="list" icon-right="list-ul")
+                    b-button(@click="buttonList" icon-right="list-ul")
             b-field
               .control(v-if="showList")
-                div.columns.is-multiline(v-if="Nota.contentList.length>=1")
-                  div.column.is-12(name="list" v-for="(n,index) in Nota.contentList")
-                    p.divInput {{n}}
-                    span.buttons.are-small
-                      button.button(@click="remove(index)")
-                        span.icon
-                          font-awesome-icon(icon="trash-alt")
+                div.columns.is-multiline(v-if="list.length>=1")
+                  ul
+                    li.column.is-full(name="list" v-for="(n,index) in list") {{n}}
+                      span.buttons.are-small
+                        b-button(@click="buttonRemove(index)" icon-right="trash-alt")
                 div.content
-                  b-input(placeholder="Pulsa Enter para añadir a la lista" name="list" v-model="dataList" @keyup.native.enter="addList")
+                  b-input(placeholder="Pulsa Enter para añadir a la lista" name="list" v-model="dataList" @keyup.native.enter="buttonAddList")
               .control(v-else)
-                  b-input(type="textarea" placeholder="Nota" name="content" v-model='Nota.content')
+                b-input(type="textarea" placeholder="Nota" name="content" v-model='content')
             footer.modal-card-footer
                 b-field
-                  .control
+                  .buttons
                     span {{Check}}
-                      b-button(type="is-info" @click="save" v-show="showSave" icon-left="save") Guardar
-                  .control
-                      b-button(type="is-danger" @click='clean' icon-left="backspace") Borrar
+                      b-button(type="is-info" @click="buttonSave" v-show="showSave" icon-left="save") Guardar
+                    b-button(type="is-danger" @click='buttonClean' icon-left="backspace") Borrar
 </template>
 
 <script>
+import Note from './modal/Note.js'
 export default {
   name: 'nueva-nota',
   data () {
@@ -43,12 +41,9 @@ export default {
       showSave: false,
       showList: false,
       ActiveIs: false,
-      Nota: {
-        id: '',
-        title: '',
-        content: '',
-        contentList: []
-      },
+      title: '',
+      content: '',
+      list: [],
       dataList: '',
       dataSelelect: ''
     }
@@ -60,55 +55,66 @@ export default {
   },
   computed: {
     logs () {
-      return console.log(`El titulo es ${this.Nota.title} \n El contenido es: ${this.Nota.content} `)
+      return console.log(`El titulo es ${this.title} \n El contenido es: ${this.content} `)
     },
     Check () {
       return this.CheckNewNote()
     }
   },
   methods: {
-    closed () {
-      console.log('Haciendo click en closedme')
-      console.log(`this.showNewNota es ${this.showNewNota}`)
+    buttonClosed () {
       this.showNewNota = false
       this.$bus.$emit('closedMe', this.showNewNota)
-      console.log(`this.showNewNota ahora es ${this.showNewNota}`)
     },
     CheckNewNote () {
-      if (this.Nota.title || this.Nota.content > 0) {
+      if (this.title || this.content > 0) {
         this.showSave = true
       } else {
         this.showSave = false
       }
     },
-    save () {
-      console.log(`Lanzado el enveto Save`)
-      this.timestamp()
+    buttonSave () {
       this.showNewNota = false
-      this.$store.dispatch('saveNote', this.Nota)
-
-      this.$bus.$emit('closedMe', this.showNewNota)
+      var note
+      if (this.list.length <= 0) {
+        note = new Note(this.title, this.content)
+        console.log(this.list.length)
+      } else {
+        note = new Note(this.title, null, this.list)
+      }
+      console.log(note)
+      const save = this.$store.dispatch('saveNote', note)
+      save
+        .then(() => {
+          this.$buefy.toast.open({
+            message: 'Nota guardada',
+            type: 'is-success'
+          })
+          this.$bus.$emit('closedMe', this.showNewNota)
+        })
+        .catch(() => {
+          this.$buefy.toast.open({
+            message: 'Nota no guardada',
+            type: 'is-danger'
+          })
+        })
     },
-    timestamp () {
-      let time = new Date()
-      this.Nota.id = time.getTime()
+    buttonClean () {
+      this.title = ''
+      this.content = ''
+      this.list = []
     },
-    clean () {
-      this.Nota.title = ''
-      this.Nota.content = ''
-      this.Nota.contentList = []
-    },
-    list () {
+    buttonList () {
       this.showList = !this.showList
-      this.Nota.content = ''
-      this.Nota.contentList = []
+      this.content = ''
+      this.list = []
     },
-    addList () {
-      this.Nota.contentList.push(this.dataList)
+    buttonAddList () {
+      this.list.push(this.dataList)
       this.dataList = ''
     },
-    remove (index) {
-      this.Nota.contentList.splice(index, 1)
+    buttonRemove (index) {
+      this.list.splice(index, 1)
     }
   }
 }
@@ -131,11 +137,21 @@ export default {
     width: 100%;
   }
 }
+ul {
+    display: inline-flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0.625rem;
 
-.divInput {
+}
+li {
   border-radius: 4px;
   border: 1px #b5b5b5 solid;
-  padding: .2em;
+  padding: .3rem;
   margin-right: .3em;
+  margin-bottom: .3rem;
+  width: 100%;
+  justify-content: space-between;
+
 }
 </style>

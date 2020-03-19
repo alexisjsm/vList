@@ -1,9 +1,9 @@
 <template lang="pug">
-#app.section
-  .container
-    menus
-    transition(name="fade" mode="in-out")
-      nueva-nota(v-if="mostrar"  :isActive="mostrar")
+#app.container.is-fluid
+  menus
+  transition(name="fade" mode="in-out")
+    nueva-nota(v-if="mostrar"  :isActive="mostrar")
+  section.section
     notas
 </template>
 <script>
