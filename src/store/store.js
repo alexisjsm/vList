@@ -39,7 +39,7 @@ const store = new Vuex.Store({
       resolve(Object.values(state.notes))
     }),
 
-    saveNote: ({ commit }, note) => new Promise(resolve => {
+    saveNote: ({ commit }, note) => new Promise((resolve, reject) => {
       let isKo = false
       let newNote = note
       console.log(newNote)
@@ -54,7 +54,11 @@ const store = new Vuex.Store({
       }).then(() => {
         commit('setNotes', updates)
       })
-      resolve(isKo)
+      if (isKo === false) {
+        resolve(isKo)
+      } else {
+        reject(isKo)
+      }
     }),
 
     deleteNote: ({ state, commit }, id) => new Promise((resolve) => {
