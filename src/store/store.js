@@ -9,50 +9,49 @@ const store = new Vuex.Store({
   },
 
   mutations: {
-    save (state, note) {
+    createNote (state, note) {
       if (note.title.length || note.content.length > 0) {
         state.notes.push(note)
       }
     },
-    removed (state, noteid) {
+    removeNote (state, noteid) {
       state.notes = state.notes.filter(n => {
         return n.id !== noteid
       })
     },
-    setNotes (state, note) {
+    setNoteInNotes (state, note) {
       let notes = state.notes
       notes.push(note)
-
       Vue.set(state.notes, notes)
     }
   },
 
   actions: {
-    fetchNotes: ({ state, commit }) => new Promise((resolve) => {
+    fetchNotes: ({ state, commit }) => new Promise((resolve, reject) => {
       db.ref('notes').once('value', (snapshot) => {
         const notes = snapshot.val()
-        Object.keys(notes).forEach((noteId) => {
-          const note = notes[noteId]
-          commit('setNotes', note)
-        })
+        if (notes != null) {
+          Object.keys(notes).forEach((noteId) => {
+            const note = notes[noteId]
+            commit('setNoteInNotes', note)
+          })
+        }
       })
       resolve(Object.values(state.notes))
     }),
 
     saveNote: ({ commit }, note) => new Promise((resolve, reject) => {
       let isKo = false
-      let newNote = note
-      console.log(newNote)
       let noteId = db.ref('notes').push().key
       let updates = {
-        ...newNote
+        ...note
       }
       db.ref('notes/' + noteId).update(updates, error => {
         if (error) {
           isKo = true
         }
       }).then(() => {
-        commit('setNotes', updates)
+        commit('createNote', updates)
       })
       if (isKo === false) {
         resolve(isKo)
@@ -63,16 +62,17 @@ const store = new Vuex.Store({
 
     deleteNote: ({ state, commit }, id) => new Promise((resolve) => {
       const instance = db.ref('notes')
+
       instance.once('value', (snapshot) => {
         const oldNotes = snapshot.val()
         Object.keys(oldNotes).forEach((noteKey) => {
           if (oldNotes[noteKey].id === id) {
             db.ref('notes').child(noteKey).remove()
+              .then(() => commit('removeNote', id))
           }
         })
       })
-      commit('removed', id)
-      resolve(Object.values(state.notes))
+      Object.values(state.notes)
     })
   }
 })

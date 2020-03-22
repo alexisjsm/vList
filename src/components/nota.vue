@@ -15,7 +15,7 @@
     transition(name="fade")
       footer(v-show=" note.id === isSelected ")
         .buttons
-          b-button(type="is-danger" @click='removed' icon-right="trash-alt")
+          b-button(type="is-danger" @click='buttonRemove' icon-right="trash-alt")
 </template>
 
 <script>
@@ -34,16 +34,11 @@ export default {
       type: Number
     }
   },
-  data () {
-    return {
-      isDeleteActive: false
-    }
-  },
   methods: {
     selected () {
       this.$emit('selected', this.note.id)
     },
-    removed () {
+    buttonRemove () {
       const remove = this.$store.dispatch('deleteNote', this.note.id)
       remove
         .then(() => {

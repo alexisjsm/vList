@@ -54,9 +54,6 @@ export default {
     }
   },
   computed: {
-    logs () {
-      return console.log(`El titulo es ${this.title} \n El contenido es: ${this.content} `)
-    },
     Check () {
       return this.CheckNewNote()
     }
@@ -82,7 +79,6 @@ export default {
       } else {
         note = new Note(this.title, null, this.list)
       }
-      console.log(note)
       const save = this.$store.dispatch('saveNote', note)
       save
         .then(() => {

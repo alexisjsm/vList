@@ -26,13 +26,17 @@ export default {
     nota
   },
 
-  beforeCreate () {
-    this.$store.dispatch('fetchNotes')
-  },
-
   data () {
     return {
       noteId: 0
+    }
+  },
+  methods: {
+    setSelected (id) {
+      this.noteId = id
+    },
+    createNotes () {
+      this.$store.dispatch('fetchNotes')
     }
   },
   computed: {
@@ -40,11 +44,8 @@ export default {
       return this.$store.state.notes
     }
   },
-
-  methods: {
-    setSelected (id) {
-      this.noteId = id
-    }
+  created () {
+    this.createNotes()
   }
 }
 </script>
