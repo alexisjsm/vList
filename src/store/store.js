@@ -27,53 +27,38 @@ const store = new Vuex.Store({
   },
 
   actions: {
-    fetchNotes: ({ state, commit }) => new Promise((resolve, reject) => {
-      db.ref('notes').once('value', (snapshot) => {
-        const notes = snapshot.val()
-        if (notes != null) {
-          Object.keys(notes).forEach((noteId) => {
-            const note = notes[noteId]
-            commit('setNoteInNotes', note)
-          })
-        }
+
+    fetchNotes: ({ state, commit }) => new Promise((resolve) => {
+      db.collection('notes').get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          commit('setNoteInNotes', doc.data())
+        })
+
+        resolve(Object.values(state.notes))
       })
-      resolve(Object.values(state.notes))
     }),
 
-    saveNote: ({ commit }, note) => new Promise((resolve, reject) => {
-      let isKo = false
-      let noteId = db.ref('notes').push().key
-      let updates = {
+    saveNote: ({ commit }, note) => {
+      db.collection('notes').add({
         ...note
-      }
-      db.ref('notes/' + noteId).update(updates, error => {
-        if (error) {
-          isKo = true
-        }
-      }).then(() => {
-        commit('createNote', updates)
       })
-      if (isKo === false) {
-        resolve(isKo)
-      } else {
-        reject(isKo)
-      }
-    }),
+        .then(() => {
+          commit('createNote', note)
+        })
+    },
 
     deleteNote: ({ state, commit }, id) => new Promise((resolve) => {
-      const instance = db.ref('notes')
-
-      instance.once('value', (snapshot) => {
-        const oldNotes = snapshot.val()
-        Object.keys(oldNotes).forEach((noteKey) => {
-          if (oldNotes[noteKey].id === id) {
-            db.ref('notes').child(noteKey).remove()
+      db.collection('notes').get().then(snap => {
+        snap.forEach((document) => {
+          if (document.data().id === id) {
+            db.collection('notes').doc(document.id).delete()
               .then(() => commit('removeNote', id))
           }
         })
       })
-      Object.values(state.notes)
+      resolve(state.notes)
     })
+
   }
 })
 
