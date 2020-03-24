@@ -16,23 +16,23 @@ transition(name="fade")
               .control(v-if="showList")
                 div.columns.is-multiline(v-if="list.length>=1")
                   ul
-                    li.column.is-full(name="list" v-for="(n,index) in list") {{n}}
+                    li.column.is-full(name="list" v-for=" (valueList,keyList ) in list") {{valueList['name']}}
                       span.buttons.are-small
-                        b-button(@click="buttonRemove(index)" icon-right="trash-alt")
+                        b-button(@click="buttonRemove(keyList)" icon-right="trash-alt")
                 div.content
-                  b-input(placeholder="Pulsa Enter para añadir a la lista" name="list" v-model="dataList" @keyup.native.enter="buttonAddList")
+                  b-input(placeholder="Pulsa Enter para añadir a la lista" name="list" v-model="element" @keyup.native.enter="buttonAddList")
               .control(v-else)
                 b-input(type="textarea" placeholder="Nota" name="content" v-model='content')
             footer.modal-card-footer
                 b-field
                   .buttons
-                    span {{Check}}
-                      b-button(type="is-info" @click="buttonSave" v-show="showSave" icon-left="save") Guardar
+                    b-button(v-model="check" type="is-info" @click="buttonSave" v-show="showSave" icon-left="save") Guardar
                     b-button(type="is-danger" @click='buttonClean' icon-left="backspace") Borrar
 </template>
 
 <script>
 import Note from './modal/Note.js'
+import Task from './modal/Task.js'
 export default {
   name: 'nueva-nota',
   data () {
@@ -40,11 +40,10 @@ export default {
       showNewNota: this.isActive,
       showSave: false,
       showList: false,
-      ActiveIs: false,
       title: '',
       content: '',
       list: [],
-      dataList: '',
+      element: '',
       dataSelelect: ''
     }
   },
@@ -54,8 +53,8 @@ export default {
     }
   },
   computed: {
-    Check () {
-      return this.CheckNewNote()
+    check () {
+      return this.checkNewNote()
     }
   },
   methods: {
@@ -63,7 +62,7 @@ export default {
       this.showNewNota = false
       this.$bus.$emit('closedMe', this.showNewNota)
     },
-    CheckNewNote () {
+    checkNewNote () {
       if (this.title || this.content > 0) {
         this.showSave = true
       } else {
@@ -75,9 +74,8 @@ export default {
       var note
       if (this.list.length <= 0) {
         note = new Note(this.title, this.content)
-        console.log(this.list.length)
       } else {
-        note = new Note(this.title, null, this.list)
+        note = new Task(this.title, this.list)
       }
       const save = this.$store.dispatch('saveNote', note)
       save
@@ -102,15 +100,22 @@ export default {
     },
     buttonList () {
       this.showList = !this.showList
-      this.content = ''
-      this.list = []
     },
     buttonAddList () {
-      this.list.push(this.dataList)
-      this.dataList = ''
+      if (this.element === '') {
+        this.$buefy.toast.open({
+          message: 'Texto vacio',
+          type: 'is-warning'
+        })
+      } else {
+        let obj = {}
+        obj = { name: this.element, type: false }
+        this.list.unshift(obj)
+        this.element = ''
+      }
     },
-    buttonRemove (index) {
-      this.list.splice(index, 1)
+    buttonRemove (key) {
+      this.list.splice(key, 1)
     }
   }
 }

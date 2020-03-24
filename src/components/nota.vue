@@ -6,10 +6,10 @@
     section
       .content(v-if="note.hasOwnProperty('list') && note.list.length >= 1")
         ul
-          li(v-for='(n,index) in note.list' :key="index")
-            b-checkbox(:native-value="n") {{n}}
-            span
-              b-button(icon-right="trash-alt" size="is-small")
+          li(v-for='(valueList,indexList) in note.list' :key="indexList")
+              b-checkbox(:v-model="value" :native-value="valueList" true-value="yes" false-value="no") {{valueList.name}}
+              span
+                b-button(icon-right="trash-alt" size="is-small")
       .content(v-else)
         p {{note.content}}
     transition(name="fade")
@@ -24,6 +24,11 @@ export default {
   name: 'nota',
   components: {
     nota
+  },
+  data () {
+    return {
+      value: []
+    }
   },
   props: {
     note: {
@@ -74,7 +79,7 @@ li:hover>span{
   display: block;
 }
 
-li span{
+li>span{
   display: none;
   float: right;
 

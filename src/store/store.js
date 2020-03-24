@@ -5,24 +5,24 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    notes: []
+    board: []
   },
 
   mutations: {
     createNote (state, note) {
       if (note.title.length || note.content.length > 0) {
-        state.notes.push(note)
+        state.board.push(note)
       }
     },
     removeNote (state, noteid) {
-      state.notes = state.notes.filter(n => {
+      state.board = state.board.filter(n => {
         return n.id !== noteid
       })
     },
     setNoteInNotes (state, note) {
-      let notes = state.notes
+      let notes = state.board
       notes.push(note)
-      Vue.set(state.notes, notes)
+      Vue.set(state.board, notes)
     }
   },
 
@@ -34,7 +34,7 @@ const store = new Vuex.Store({
           commit('setNoteInNotes', doc.data())
         })
 
-        resolve(Object.values(state.notes))
+        resolve(Object.values(state.board))
       })
     }),
 
@@ -56,7 +56,7 @@ const store = new Vuex.Store({
           }
         })
       })
-      resolve(state.notes)
+      resolve(state.board)
     })
 
   }
