@@ -1,23 +1,11 @@
 import Board from './Board'
 
 export default class Task extends Board {
-  constructor (title = '', list = [{}]) {
-    super(title)
+  constructor (title = '', list = [{}], time = '') {
+    super(title, time)
     this.list = list
   }
-  get allList () {
+  get allTask () {
     return this.list
-  }
-
-  set changeStateElement (elementName = 'String') {
-    Object.keys(this.list).forEach(e => {
-      if (e === elementName) {
-        if (this.list[e]) {
-          this.list[e] = false
-        } else {
-          this.list[e] = true
-        }
-      }
-    })
   }
 }

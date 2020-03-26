@@ -1,19 +1,14 @@
 export default class Board {
-  constructor (title) {
-    this.id = this.timestamp()
+  constructor (title = '', time = '') {
     this.title = title
+    this.time = time
   }
 
-  get getId () {
-    return this.id
+  get getTime () {
+    return this.time
   }
 
   get getTitle () {
     return this.title
-  }
-
-  timestamp () {
-    let time = new Date()
-    return time.getTime()
   }
 }

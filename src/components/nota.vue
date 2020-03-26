@@ -7,15 +7,18 @@
       .content(v-if="note.hasOwnProperty('list') && note.list.length >= 1")
         ul
           li(v-for='(valueList,indexList) in note.list' :key="indexList")
-              b-checkbox(:v-model="value" :native-value="valueList" true-value="yes" false-value="no") {{valueList.name}}
+              b-checkbox(:v-model="value" :native-value="valueList" true-value="yes" false-value="no") {{valueList['name']}}
               span
                 b-button(icon-right="trash-alt" size="is-small")
       .content(v-else)
         p {{note.content}}
     transition(name="fade")
       footer(v-show=" note.id === isSelected ")
-        .buttons
-          b-button(type="is-danger" @click='buttonRemove' icon-right="trash-alt")
+        span.is-flex
+          small.is-size-7.has-text-dark.has-text-left {{convertTimestap}}
+        span
+          .buttons
+            b-button(type="is-danger" @click='buttonRemove' icon-right="trash-alt")
 </template>
 
 <script>
@@ -36,7 +39,13 @@ export default {
       require: true
     },
     isSelected: {
-      type: Number
+      type: String
+    }
+  },
+  computed: {
+    convertTimestap () {
+      let time = this.note.time.toDate()
+      return time.toLocaleString()
     }
   },
   methods: {
@@ -82,7 +91,9 @@ li:hover>span{
 li>span{
   display: none;
   float: right;
-
+}
+.is-flex{
+  justify-content: right;
 }
 
 </style>

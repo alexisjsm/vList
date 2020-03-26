@@ -40,6 +40,7 @@ export default {
       showNewNota: this.isActive,
       showSave: false,
       showList: false,
+      time: 0,
       title: '',
       content: '',
       list: [],
@@ -63,35 +64,36 @@ export default {
       this.$bus.$emit('closedMe', this.showNewNota)
     },
     checkNewNote () {
-      if (this.title || this.content > 0) {
+      if (this.title.length > 0 & this.content.length > 0 || this.title.length > 0 & this.list.length > 0) {
         this.showSave = true
       } else {
         this.showSave = false
       }
     },
-    buttonSave () {
+    async buttonSave () {
       this.showNewNota = false
       var note
       if (this.list.length <= 0) {
-        note = new Note(this.title, this.content)
+        note = new Note(this.title, this.content, this.time = this.timestamp())
       } else {
-        note = new Task(this.title, this.list)
+        note = new Task(this.title, this.list, this.time = this.timestamp())
       }
-      const save = this.$store.dispatch('saveNote', note)
-      save
-        .then(() => {
-          this.$buefy.toast.open({
-            message: 'Nota guardada',
-            type: 'is-success'
-          })
-          this.$bus.$emit('closedMe', this.showNewNota)
+      const save = await this.$store.dispatch('saveNote', note)
+      if (save === 'Ok') {
+        this.$buefy.toast.open({
+          message: 'Nota guardada',
+          type: 'is-success'
         })
-        .catch(() => {
-          this.$buefy.toast.open({
-            message: 'Nota no guardada',
-            type: 'is-danger'
-          })
+      } else {
+        this.$buefy.toast.open({
+          message: 'Nota no guardada',
+          type: 'is-danger'
         })
+      }
+    },
+    timestamp () {
+      let time = new Date()
+      return time.getTime()
     },
     buttonClean () {
       this.title = ''
@@ -110,7 +112,7 @@ export default {
       } else {
         let obj = {}
         obj = { name: this.element, type: false }
-        this.list.unshift(obj)
+        this.list.push(obj)
         this.element = ''
       }
     },

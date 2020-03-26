@@ -7,7 +7,7 @@
         :key="note.id"
         :note="note"
         @selected="setSelected"
-        :class="{'is-active': note.id === noteId}"
+        :class="{'is-active': note.getId === noteId}"
         :isSelected="noteId")
   .columns.is-centered(v-else)
     .column
@@ -28,23 +28,19 @@ export default {
 
   data () {
     return {
-      noteId: 0
+      noteId: '',
+      notes: []
     }
   },
   methods: {
     setSelected (id) {
       this.noteId = id
     },
-    createNotes () {
-      this.$store.dispatch('fetchNotes')
+    async createNotes () {
+      this.notes = await this.$store.dispatch('fetchNotes')
     }
   },
-  computed: {
-    notes () {
-      return this.$store.state.board
-    }
-  },
-  created () {
+  mounted () {
     this.createNotes()
   }
 }

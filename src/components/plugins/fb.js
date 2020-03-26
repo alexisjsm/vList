@@ -13,3 +13,7 @@ const config = {
 const app = Firebase.initializeApp(config)
 
 export const db = app.firestore()
+
+// export timestamp
+
+export const { Timestamp } = Firebase.firestore
