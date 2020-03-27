@@ -16,36 +16,53 @@ export default new Vuex.Store({
     createNote (state, note) {
       state.board.push(note)
     },
-    ...vuexfireMutations,
     removeNote (state, noteid) {
       state.board = state.board.filter(n => {
         return n.id !== noteid
       })
-    }
+    },
+    checkedList (state, list) {
+      let board = state.board
+      console.log(board)
+      console.log(`${list}`)
+    },
+    ...vuexfireMutations
   },
 
   actions: {
     fetchNotes: firestoreAction(({ bindFirestoreRef }) => {
-      return bindFirestoreRef('notes', db.collection('notes'))
+      return bindFirestoreRef('board', db.collection('board').orderBy('time', 'asc'))
     }),
 
     saveNote: firestoreAction(({ commit }, note) => {
       const { time } = note
-      const data = db.collection('notes').add({
+      let newNote = {
         ...note,
         time: Timestamp.fromDate(new Date(time))
-      })
+      }
+      const data = db.collection('board').add(newNote)
         .then(() => {
-          commit('createNote', note)
+          // commit('createNote', newNote)
           return 'Ok'
         })
       return data
     }),
 
     deleteNote: firestoreAction(({ commit }, id) => {
-      const data = db.collection('notes').doc(id).delete()
+      const data = db.collection('board').doc(id).delete()
         .then(() => {
           commit('removeNote', id)
+          return 'Ok'
+        })
+      return data
+    }),
+
+    changeStateListElement: firestoreAction(({ commit }, oldnote) => {
+      let { list } = oldnote
+      const data = db.collection('board').doc(oldnote.id)
+        .update({ list: list })
+        .then(() => {
+          commit('checkedList', oldnote)
           return 'Ok'
         })
       return data

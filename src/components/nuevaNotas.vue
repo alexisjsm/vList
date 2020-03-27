@@ -84,6 +84,7 @@ export default {
           message: 'Nota guardada',
           type: 'is-success'
         })
+        this.$bus.$emit('closedMe', this.showNewNota)
       } else {
         this.$buefy.toast.open({
           message: 'Nota no guardada',

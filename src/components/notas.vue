@@ -5,7 +5,7 @@
       .tile.is-ancestor(
         is="nota"
         :key="note.id"
-        :note="note"
+        :notePop="note"
         @selected="setSelected"
         :class="{'is-active': note.getId === noteId}"
         :isSelected="noteId")
@@ -40,7 +40,7 @@ export default {
       this.notes = await this.$store.dispatch('fetchNotes')
     }
   },
-  mounted () {
+  created () {
     this.createNotes()
   }
 }

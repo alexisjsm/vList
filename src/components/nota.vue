@@ -6,8 +6,9 @@
     section
       .content(v-if="note.hasOwnProperty('list') && note.list.length >= 1")
         ul
-          li(v-for='(valueList,indexList) in note.list' :key="indexList")
-              b-checkbox(:v-model="value" :native-value="valueList" true-value="yes" false-value="no") {{valueList['name']}}
+          li(v-for='(valueList,indexList) in note.list' :key="indexList" )
+              b-checkbox(:name="valueList['name']" v-model="valueList.type" @input="buttonChecked(note)" :native-value="valueList['type']")
+                span {{valueList.name}}
               span
                 b-button(icon-right="trash-alt" size="is-small")
       .content(v-else)
@@ -30,11 +31,12 @@ export default {
   },
   data () {
     return {
-      value: []
+      note: this.notePop,
+      checked: []
     }
   },
   props: {
-    note: {
+    notePop: {
       type: Object,
       require: true
     },
@@ -67,6 +69,10 @@ export default {
             type: 'is-danger'
           })
         })
+    },
+    buttonChecked (id) {
+      console.log(id)
+      this.$store.dispatch('changeStateListElement', id)
     }
   }
 }
