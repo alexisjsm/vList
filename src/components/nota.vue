@@ -25,23 +25,25 @@
 <script>
 import nota from './nota.vue'
 export default {
-  name: 'nota',
+  name: 'Nota',
   components: {
     nota
+  },
+  props: {
+    notePop: {
+      type: Object,
+      default: Object,
+      require: true
+    },
+    isSelected: {
+      type: String,
+      default: ''
+    }
   },
   data () {
     return {
       note: this.notePop,
       checked: []
-    }
-  },
-  props: {
-    notePop: {
-      type: Object,
-      require: true
-    },
-    isSelected: {
-      type: String
     }
   },
   computed: {
@@ -54,24 +56,21 @@ export default {
     selected () {
       this.$emit('selected', this.note.id)
     },
-    buttonRemove () {
-      const remove = this.$store.dispatch('deleteNote', this.note.id)
-      remove
-        .then(() => {
-          this.$buefy.toast.open({
-            message: 'Nota borrada',
-            type: 'is-success'
-          })
+    async buttonRemove () {
+      const remove = await this.$store.dispatch('deleteNote', this.note.id)
+      if (remove.message === 'Ok') {
+        this.$buefy.toast.open({
+          message: 'Nota borrada',
+          type: 'is-success'
         })
-        .catch(() => {
-          this.$buefy.toast.open({
-            message: 'Nota no borrada',
-            type: 'is-danger'
-          })
+      } else {
+        this.$buefy.toast.open({
+          message: 'Nota no borrada',
+          type: 'is-danger'
         })
+      }
     },
     buttonChecked (id) {
-      console.log(id)
       this.$store.dispatch('changeStateListElement', id)
     }
   }

@@ -1,5 +1,5 @@
 <template lang="pug">
-#notas
+#notas(ref="notes" :closable="false")
   .columns.is-multiline(v-if="notes.length>=1")
    .column.is-one-quarter(v-for="note in notes")
       .tile.is-ancestor(
@@ -21,7 +21,7 @@
 import nota from './nota.vue'
 
 export default {
-  name: 'notas',
+  name: 'Notas',
   components: {
     nota
   },
@@ -29,19 +29,31 @@ export default {
   data () {
     return {
       noteId: '',
-      notes: []
+      isFullPage: true
     }
   },
+
+  created () {
+    this.createNotes()
+  },
+
+  computed: {
+    notes () {
+      return this.$store.state.board
+    }
+  },
+
   methods: {
     setSelected (id) {
       this.noteId = id
     },
-    async createNotes () {
-      this.notes = await this.$store.dispatch('fetchNotes')
+    createNotes () {
+      const loadingComponet = this.$buefy.loading.open({
+        container: this.isFullPage ? null : this.$refs.notes
+      })
+      this.$store.dispatch('fetchNotes')
+      setTimeout(() => loadingComponet.close(), 3 * 1000)
     }
-  },
-  created () {
-    this.createNotes()
   }
 }
 </script>

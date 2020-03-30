@@ -1,35 +1,33 @@
 <template lang="pug">
-  header#menus
-    nav.navbar(role='navegation')
-      .navbar-brand
-        a(href='/' class="navbar-item title has-text-grey-dark") vList
-        a(role="button" aria-label="menu" class="navbar-burger burger" @click="isMenuActive" :class="{'is-active':isActive}")
-          span(aria-hidden="true" v-for="n in 3")
-
-      div(class="navbar-menu" :class="{'is-active':isActive}")
-        .navbar-end
-          .navbar-item
-            .buttons
-              a.button.is-primary.is-outlined(@click="NewNotas") Nueva nota
+#menus
+  b-navbar
+    template(slot='brand')
+      b-navbar-item
+        h1.title vBoard
+    template(slot='end')
+      b-navbar-item(tag='div')
+          .buttons
+            a( class="button is-primary is-outlined"
+              @click="newNote") Nueva nota
 </template>
 <script>
+import nuevaNotas from '../components/modal/nuevaNotas.vue'
 export default {
   name: 'menus',
-  data () {
-    return {
-      isActive: false,
-      showNewNota: false
-    }
+  components: {
+    nuevaNotas
   },
   methods: {
-    NewNotas () {
-      console.log(this.showNewNota)
-
-      this.showNewNota = true
-      this.$bus.$emit('newNotes', this.showNewNota)
-    },
-    isMenuActive () {
-      this.isActive = !this.isActive
+    newNote () {
+      this.$buefy.modal.open({
+        parent: this,
+        component: nuevaNotas,
+        hasModalCard: true,
+        ariaRole: 'dialog',
+        ariaModal: true,
+        trapFocus: true,
+        canCancel: false
+      })
     }
   }
 }
