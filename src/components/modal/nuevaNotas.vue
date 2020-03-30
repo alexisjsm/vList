@@ -1,43 +1,40 @@
 <template lang="pug">
-transition(name="fade")
-  b-modal(has-modal-card :active.sync="showNewNota")
-      .modal-card
-          header.modal-card-head
-              h1.modal-card-title Nueva nota
-              button.delete(@click="buttonClosed")
-          section.modal-card-body
+  .modal-card
+      header.modal-card-head
+          h1.modal-card-title Nueva nota
+          button.delete(@click="buttonCancel")
+      section.modal-card-body
+        b-field
+          .control
+            b-input(type="text" placeholder="Titulo" name="title" v-model='title')
+            .control
+              .buttons
+                b-button(@click="buttonList" icon-right="list-ul")
+        b-field
+          .control(v-if="showList")
+            div.columns.is-multiline(v-if="list.length>=1")
+              ul
+                li.column.is-full(name="list" v-for=" (valueList,keyList ) in list") {{valueList['name']}}
+                  span.buttons.are-small
+                    b-button(@click="buttonRemove(keyList)" icon-right="trash-alt")
+            div.content
+              b-input(placeholder="Pulsa Enter para añadir a la lista" name="list" v-model="element" @keyup.native.enter="buttonAddList" )
+          .control(v-else)
+            b-input(type="textarea" placeholder="Nota" name="content" v-model='content')
+        footer.modal-card-footer
             b-field
-              .control
-                b-input(type="text" placeholder="Titulo" name="title" v-model='title')
-                .control
-                  .buttons
-                    b-button(@click="buttonList" icon-right="list-ul")
-            b-field
-              .control(v-if="showList")
-                div.columns.is-multiline(v-if="list.length>=1")
-                  ul
-                    li.column.is-full(name="list" v-for=" (valueList,keyList ) in list") {{valueList['name']}}
-                      span.buttons.are-small
-                        b-button(@click="buttonRemove(keyList)" icon-right="trash-alt")
-                div.content
-                  b-input(placeholder="Pulsa Enter para añadir a la lista" name="list" v-model="element" @keyup.native.enter="buttonAddList")
-              .control(v-else)
-                b-input(type="textarea" placeholder="Nota" name="content" v-model='content')
-            footer.modal-card-footer
-                b-field
-                  .buttons
-                    b-button(v-model="check" type="is-info" @click="buttonSave" v-show="showSave" icon-left="save") Guardar
-                    b-button(type="is-danger" @click='buttonClean' icon-left="backspace") Borrar
+              .buttons
+                b-button(v-model="check" type="is-info" @click="buttonSave" v-show="showSave" icon-left="save") Guardar
+                b-button(type="is-danger" @click='buttonClean' icon-left="backspace") Borrar
 </template>
 
 <script>
-import Note from './modal/Note.js'
-import Task from './modal/Task.js'
+import Note from '../modules/Note'
+import Task from '../modules/Task'
 export default {
-  name: 'nueva-nota',
+  name: 'NuevaNota',
   data () {
     return {
-      showNewNota: this.isActive,
       showSave: false,
       showList: false,
       time: 0,
@@ -48,20 +45,14 @@ export default {
       dataSelelect: ''
     }
   },
-  props: {
-    isActive: {
-      type: Boolean
-    }
-  },
   computed: {
     check () {
       return this.checkNewNote()
     }
   },
   methods: {
-    buttonClosed () {
-      this.showNewNota = false
-      this.$bus.$emit('closedMe', this.showNewNota)
+    buttonCancel () {
+      this.$parent.close()
     },
     checkNewNote () {
       if (this.title.length > 0 & this.content.length > 0 || this.title.length > 0 & this.list.length > 0) {
@@ -71,7 +62,6 @@ export default {
       }
     },
     async buttonSave () {
-      this.showNewNota = false
       var note
       if (this.list.length <= 0) {
         note = new Note(this.title, this.content, this.time = this.timestamp())
@@ -79,12 +69,12 @@ export default {
         note = new Task(this.title, this.list, this.time = this.timestamp())
       }
       const save = await this.$store.dispatch('saveNote', note)
-      if (save === 'Ok') {
+      if (save.message === 'Ok') {
         this.$buefy.toast.open({
           message: 'Nota guardada',
           type: 'is-success'
         })
-        this.$bus.$emit('closedMe', this.showNewNota)
+        this.$parent.close()
       } else {
         this.$buefy.toast.open({
           message: 'Nota no guardada',

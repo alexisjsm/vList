@@ -21,17 +21,31 @@ export default new Vuex.Store({
         return n.id !== noteid
       })
     },
-    checkedList (state, list) {
+    checkedList (state) {
       let board = state.board
-      console.log(board)
-      console.log(`${list}`)
+      return board
+    },
+    setNotesInBoard (state, note) {
+      state.board.push(note)
     },
     ...vuexfireMutations
   },
 
   actions: {
-    fetchNotes: firestoreAction(({ bindFirestoreRef }) => {
-      return bindFirestoreRef('board', db.collection('board').orderBy('time', 'asc'))
+    fetchNotes: firestoreAction(({ commit, bindFirestoreRef }) => {
+      const data = bindFirestoreRef('board', db.collection('board').get()
+        .then((querysnapshot) => {
+          querysnapshot.forEach((doc) => {
+            let note = {
+              id: doc.id,
+              ...doc.data()
+            }
+            commit('setNotesInBoard', note)
+            return { message: 'Ok' }
+          })
+        })
+      )
+      return data
     }),
 
     saveNote: firestoreAction(({ commit }, note) => {
@@ -40,19 +54,21 @@ export default new Vuex.Store({
         ...note,
         time: Timestamp.fromDate(new Date(time))
       }
+
       const data = db.collection('board').add(newNote)
-        .then(() => {
-          // commit('createNote', newNote)
-          return 'Ok'
+        .then((docRef) => {
+          newNote.id = docRef.id
+          commit('createNote', newNote)
+          return { message: 'Ok' }
         })
       return data
     }),
 
-    deleteNote: firestoreAction(({ commit }, id) => {
+    deleteNote: firestoreAction(({ commit, state }, id) => {
       const data = db.collection('board').doc(id).delete()
         .then(() => {
           commit('removeNote', id)
-          return 'Ok'
+          return { message: 'Ok', data: state.board }
         })
       return data
     }),
@@ -62,8 +78,8 @@ export default new Vuex.Store({
       const data = db.collection('board').doc(oldnote.id)
         .update({ list: list })
         .then(() => {
-          commit('checkedList', oldnote)
-          return 'Ok'
+          commit('checkedList')
+          return { message: 'Ok' }
         })
       return data
     })
