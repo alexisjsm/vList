@@ -12,7 +12,10 @@ const config = {
 
 const app = Firebase.initializeApp(config)
 
-export const db = app.firestore()
+const db = app.firestore()
+const fv = Firebase.firestore.FieldValue
+
+export { db, fv }
 
 // export timestamp
 

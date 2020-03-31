@@ -2,14 +2,21 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { vuexfireMutations, firestoreAction } from 'vuexfire'
 import { db, Timestamp } from '../components/plugins/fb'
-// import Task from '../components/modal/Task'
-// import Note from '../components/modal/Note'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     board: []
+  },
+
+  getters: {
+    getBoardById: (state) => (id) => {
+      return state.board.find(note => note.id === id)
+    },
+    getBoardAll: (state) => {
+      return state.board
+    }
   },
 
   mutations: {
@@ -28,12 +35,24 @@ export default new Vuex.Store({
     setNotesInBoard (state, note) {
       state.board.push(note)
     },
+    removeIteamInList (state, infoItem) {
+      let { id, indexItem } = infoItem
+
+      let indexState = 0
+
+      for (let sb in state.board) {
+        if (sb.id === id) {
+          indexState = sb
+        }
+      }
+      state.board[indexState].list = state.board[indexState].list.filter(value => value.name !== indexItem)
+    },
     ...vuexfireMutations
   },
 
   actions: {
-    fetchNotes: firestoreAction(({ commit, bindFirestoreRef }) => {
-      const data = bindFirestoreRef('board', db.collection('board').get()
+    fetchNotes: firestoreAction(({ commit }) => {
+      const data = db.collection('board').get()
         .then((querysnapshot) => {
           querysnapshot.forEach((doc) => {
             let note = {
@@ -44,7 +63,6 @@ export default new Vuex.Store({
             return { message: 'Ok' }
           })
         })
-      )
       return data
     }),
 
@@ -82,6 +100,19 @@ export default new Vuex.Store({
           return { message: 'Ok' }
         })
       return data
+    }),
+    removeIteamList: firestoreAction(({ commit }, infoItem) => {
+      let { id, indexItem, list } = infoItem
+
+      const noteRef = db.collection('board').doc(id)
+        .update({
+          list: list.filter(value => value.name !== indexItem)
+        })
+        .then(() => {
+          commit('removeIteamInList', infoItem)
+          return { message: 'Ok' }
+        })
+      return noteRef
     })
   }
 })

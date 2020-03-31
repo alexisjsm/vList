@@ -39,7 +39,7 @@ export default {
 
   computed: {
     notes () {
-      return this.$store.state.board
+      return this.$store.getters.getBoardAll
     }
   },
 

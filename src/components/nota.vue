@@ -10,7 +10,7 @@
               b-checkbox(:name="valueList['name']" v-model="valueList.type" @input="buttonChecked(note)" :native-value="valueList['type']")
                 span {{valueList.name}}
               span
-                b-button(icon-right="trash-alt" size="is-small")
+                b-button(icon-right="trash-alt" size="is-small" @click="buttonRemoveItem({id: note.id , indexItem: valueList.name, list: note.list})")
       .content(v-else)
         p {{note.content}}
     transition(name="fade")
@@ -72,6 +72,24 @@ export default {
     },
     buttonChecked (id) {
       this.$store.dispatch('changeStateListElement', id)
+    },
+
+    async buttonRemoveItem ({ id, indexItem, list }) {
+      const infoItem = { id, indexItem, list }
+
+      const removeItem = await this.$store.dispatch('removeIteamList', infoItem)
+      console.log(removeItem)
+      if (removeItem.message === 'Ok') {
+        this.$buefy.toast.open({
+          message: 'Elemento borrado',
+          type: 'is-success'
+        })
+      } else {
+        this.$buefy.toast.open({
+          message: 'Elemento no borrado',
+          type: 'is-danger'
+        })
+      }
     }
   }
 }
