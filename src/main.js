@@ -6,8 +6,6 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-import eventBus from './components/plugins/event_bus'
-
 import store from './store/store.js'
 
 import buefy from 'buefy'
@@ -32,8 +30,6 @@ Vue.use(buefy, {
   defaultIconComponent: 'font-awesome-icon',
   defaultIconPack: 'fas'
 })
-
-Vue.use(eventBus)
 
 Vue.config.productionTip = false
 
