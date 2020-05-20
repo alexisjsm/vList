@@ -13,6 +13,8 @@
                 b-button(icon-right="trash-alt" size="is-small" @click="buttonRemoveItem({id: note.id , indexItem: valueList.name, list: note.list})")
       .content(v-else)
         p {{note.content}}
+      .content(v-if="note.file!=null")
+        img(:src="note.file")
     transition(name="fade")
       footer(v-show=" note.id === isSelected ")
         span.is-flex
@@ -23,12 +25,8 @@
 </template>
 
 <script>
-import nota from './nota.vue'
 export default {
   name: 'Nota',
-  components: {
-    nota
-  },
   props: {
     notePop: {
       type: Object,

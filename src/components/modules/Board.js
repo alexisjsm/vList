@@ -1,7 +1,8 @@
 export default class Board {
-  constructor (title = '', time = '') {
+  constructor (title = '', time = '', file = null) {
     this.title = title
     this.time = time
+    this.file = file
   }
 
   get getTime () {
@@ -10,5 +11,9 @@ export default class Board {
 
   get getTitle () {
     return this.title
+  }
+
+  get getFile () {
+    return this.file
   }
 }

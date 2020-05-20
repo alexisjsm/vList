@@ -1,5 +1,5 @@
 import { vuexfireMutations, firestoreAction } from 'vuexfire'
-import { db, Timestamp } from '../../components/plugins/fb'
+import { db, Timestamp, storage } from '../../components/plugins/fb'
 
 export const dashboard = {
   state: {
@@ -16,9 +16,6 @@ export const dashboard = {
   },
 
   mutations: {
-    createNote (state, note) {
-      state.board.push(note)
-    },
     removeNote (state, noteid) {
       state.board = state.board.filter(n => {
         return n.id !== noteid
@@ -29,6 +26,25 @@ export const dashboard = {
       return board
     },
     setNotesInBoard (state, note) {
+      if (note.file) {
+        storage.ref().child(`image/${note.file}`).getDownloadURL().then((url) => {
+          let headers = new Headers()
+          let init = {
+            method: 'GET',
+            headers: headers,
+            mode: 'cors',
+            cache: 'default'
+          }
+          fetch(url, init)
+            .then((response) => {
+              if (response.ok) {
+                response.blob().then((img) => {
+                  note.file = URL.createObjectURL(img)
+                })
+              }
+            })
+        })
+      }
       state.board.push(note)
     },
     removeIteamInList (state, infoItem) {
@@ -63,26 +79,50 @@ export const dashboard = {
     }),
 
     saveNote: firestoreAction(({ commit }, note) => {
-      const { time } = note
-      let newNote = {
-        ...note,
-        time: Timestamp.fromDate(new Date(time))
+      const { time, file } = note
+      let newNote = {}
+      if (file) {
+        let storageRef = storage.ref()
+        let upload = storageRef.child('image/' + file.name).put(file)
+        upload.then((response) => {
+          console.log(response)
+        })
+        newNote = {
+          ...note,
+          time: Timestamp.fromDate(new Date(time)),
+          file: file.name
+        }
+      } else {
+        newNote = {
+          ...note,
+          time: Timestamp.fromDate(new Date(time))
+        }
       }
 
       const data = db.collection('board').add(newNote)
         .then((docRef) => {
           newNote.id = docRef.id
-          commit('createNote', newNote)
+          commit('setNotesInBoard', newNote)
           return { message: 'Ok' }
         })
       return data
     }),
 
     deleteNote: firestoreAction(({ commit, state }, id) => {
-      const data = db.collection('board').doc(id).delete()
+      const data = db.collection('board').doc(id).get()
+        .then(doc => {
+          let note = doc.data()
+          if (note.file) {
+            storage.ref().child(`image/${note.file}`).delete()
+          }
+        })
         .then(() => {
-          commit('removeNote', id)
-          return { message: 'Ok', data: state.board }
+          let remove = db.collection('board').doc(id).delete()
+            .then(() => {
+              commit('removeNote', id)
+              return { message: 'Ok', data: state.board }
+            })
+          return remove
         })
       return data
     }),

@@ -10,6 +10,11 @@
             .control
               .buttons
                 b-button(@click="buttonList" icon-right="list-ul")
+                b-field
+                  b-upload(accept="image/*" v-model="files" @change.native="buttonPrevImg")
+                    a(class="button")
+                      b-icon(icon="images")
+                  span(class="file-name" v-if="files") {{files.name}}
         b-field
           .control(v-if="showList")
             div.columns.is-multiline(v-if="list.length>=1")
@@ -20,7 +25,11 @@
             div.content
               b-input(placeholder="Pulsa Enter para añadir a la lista" name="list" v-model="element" @keyup.native.enter="buttonAddList" )
           .control(v-else)
-            b-input(type="textarea" placeholder="Nota" name="content" v-model='content')
+            b-input(type="textarea" placeholder="Nota" name="content" expanded v-model='content')
+        b-field(v-if="url!=null")
+          .control
+            div.column
+              img(:src="url")
         footer.modal-card-footer
             b-field
               .buttons
@@ -37,6 +46,8 @@ export default {
     return {
       showSave: false,
       showList: false,
+      files: null,
+      url: null,
       time: 0,
       title: '',
       content: '',
@@ -64,9 +75,9 @@ export default {
     async buttonSave () {
       var note
       if (this.list.length <= 0) {
-        note = new Note(this.title, this.content, this.time = this.timestamp())
+        note = new Note(this.title, this.content, this.time = this.timestamp(), this.files)
       } else {
-        note = new Task(this.title, this.list, this.time = this.timestamp())
+        note = new Task(this.title, this.list, this.time = this.timestamp(), this.files)
       }
       const save = await this.$store.dispatch('saveNote', note)
       if (save.message === 'Ok') {
@@ -89,6 +100,7 @@ export default {
     buttonClean () {
       this.title = ''
       this.content = ''
+      this.files = []
       this.list = []
     },
     buttonList () {
@@ -109,6 +121,14 @@ export default {
     },
     buttonRemove (key) {
       this.list.splice(key, 1)
+    },
+
+    buttonPrevImg () {
+      if (typeof this.files !== 'undefined') {
+        this.url = URL.createObjectURL(this.files)
+      } else {
+        this.url = null
+      }
     }
   }
 }
