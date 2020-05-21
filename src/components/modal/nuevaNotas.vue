@@ -14,7 +14,6 @@
                   b-upload(accept="image/*" v-model="files" @change.native="buttonPrevImg")
                     a(class="button")
                       b-icon(icon="images")
-                  span(class="file-name" v-if="files") {{files.name}}
         b-field
           .control(v-if="showList")
             div.columns.is-multiline(v-if="list.length>=1")
@@ -28,8 +27,11 @@
             b-input(type="textarea" placeholder="Nota" name="content" expanded v-model='content')
         b-field(v-if="url!=null")
           .control
-            div.column
+            div.column.is-flex.is-centered.image-content
               img(:src="url")
+              div.overlay
+                div.overlay-content
+                  b-button(icon-left="times" @click.native="buttonRemoveImg")
         footer.modal-card-footer
             b-field
               .buttons
@@ -129,6 +131,10 @@ export default {
       } else {
         this.url = null
       }
+    },
+    buttonRemoveImg () {
+      this.files = null
+      this.url = null
     }
   }
 }
@@ -168,4 +174,34 @@ li {
   justify-content: space-between;
 
 }
+
+.is-centered{
+  justify-content: center;
+  align-content: center;
+}
+
+.image-content:hover .overlay {
+  opacity: 1;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background:  hsla(0, 0%, 86%, 0.5);
+}
+
+.overlay-content {
+  padding: .5em;
+  margin: 0 auto;
+  width: 100%;
+  align-content: center;
+  justify-content: center;
+}
+
 </style>

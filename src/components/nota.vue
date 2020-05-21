@@ -14,11 +14,13 @@
       .content(v-else)
         p {{note.content}}
       .content(v-if="note.file!=null")
+      div.is-flex.is-centered
         img(:src="note.file")
     transition(name="fade")
       footer(v-show=" note.id === isSelected ")
-        span.is-flex
-          small.is-size-7.has-text-dark.has-text-left {{convertTimestap}}
+        div.is-flex.justify-right
+          span
+            small.is-size-7.has-text-dark.has-text-left {{convertTimestap}}
         span
           .buttons
             b-button(type="is-danger" @click='buttonRemove' icon-right="trash-alt")
@@ -112,8 +114,13 @@ li>span{
   display: none;
   float: right;
 }
-.is-flex{
-  justify-content: right;
+
+.is-centered {
+  justify-content: center;
+  align-content: center;
 }
 
+.justify-right {
+  justify-content: right;
+}
 </style>
