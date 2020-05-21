@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { vuexfireMutations, firestoreAction } from 'vuexfire'
 import { db, Timestamp, storage } from '../../components/plugins/fb'
 
@@ -49,15 +50,14 @@ export const dashboard = {
     },
     removeIteamInList (state, infoItem) {
       let { id, indexItem } = infoItem
+      let index = 0
 
-      let indexState = 0
-
-      for (let sb in state.board) {
-        if (sb.id === id) {
-          indexState = sb
+      state.board.map((value, key) => {
+        if (value.id === id) {
+          index = key
         }
-      }
-      state.board[indexState].list = state.board[indexState].list.filter(value => value.name !== indexItem)
+      })
+      state.board[index].list = state.board[index].list.filter(value => value.name !== indexItem)
     },
     ...vuexfireMutations
   },

@@ -76,7 +76,6 @@ export default {
       const infoItem = { id, indexItem, list }
 
       const removeItem = await this.$store.dispatch('removeIteamList', infoItem)
-      console.log(removeItem)
       if (removeItem.message === 'Ok') {
         this.$buefy.toast.open({
           message: 'Elemento borrado',
