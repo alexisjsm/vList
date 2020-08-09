@@ -7,13 +7,16 @@
         b-field
           .control
             b-input(type="text" placeholder="Titulo" name="title" v-model='title')
-            .control
-              .buttons
-                b-button(@click="buttonList" icon-right="list-ul")
-                b-field
-                  b-upload(accept="image/*" v-model="files" @change.native="buttonPrevImg")
-                    a(class="button")
-                      b-icon(icon="images")
+        b-field
+          .control
+            b-tooltip(label="Create a list" v-if="!showList")
+              b-button(@click="buttonList" icon-right="list-ul")
+            b-tooltip(label="Create a note" v-else)
+              b-button(@click="buttonList" icon-right="sticky-note")
+            b-tooltip(label="Updated image")
+              b-upload(accept="image/*" v-model="files" @change.native="buttonPrevImg")
+                a.button
+                  b-icon(icon="images")
         b-field
           .control(v-if="showList")
             div.columns.is-multiline(v-if="list.length>=1")
