@@ -29,8 +29,8 @@ export const dashboard = {
     setNotesInBoard (state, note) {
       if (note.file) {
         storage.ref().child(`image/${note.file}`).getDownloadURL().then((url) => {
-          let headers = new Headers()
-          let init = {
+          const headers = new Headers()
+          const init = {
             method: 'GET',
             headers: headers,
             mode: 'cors',
@@ -82,10 +82,10 @@ export const dashboard = {
       const { time, file } = note
       let newNote = {}
       if (file) {
-        let storageRef = storage.ref()
-        let upload = storageRef.child('image/' + file.name).put(file)
+        const storageRef = storage.ref()
+        const upload = storageRef.child('image/' + file.name).put(file)
         upload.then((response) => {
-          console.log(response)
+          return response
         })
         newNote = {
           ...note,
